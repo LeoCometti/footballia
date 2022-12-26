@@ -2,29 +2,8 @@
 
 #include "footballpitch.h"
 #include "footballpitch.cpp"
-
-//------------------------------------------------------------------------------------
-// Modifications on the program
-//------------------------------------------------------------------------------------
-
-// Draw the Pitch
-
-Vector2 ballPosition = { 0.0F, 0.0F };
-float ballRadius = 2.2F;// 6.0F; 
-
-void DrawPlayersOnPitch()
-{
-    ballPosition.x = GetMouseX() - ballRadius/2.0f;
-    ballPosition.y = GetMouseY() - ballRadius/2.0f;
-
-    // Check walls collision for bouncing
-    if (ballPosition.x >= (GetScreenWidth() - ballRadius)) ballPosition.x = (GetScreenWidth() - ballRadius);
-    else if (ballPosition.x <= ballRadius/2.0f) ballPosition.x = ballRadius/2.0f;
-    if (ballPosition.y >= (GetScreenHeight() - ballRadius)) ballPosition.y = (GetScreenHeight() - ballRadius);
-    else if (ballPosition.y <= ballRadius/2.0f) ballPosition.y = ballRadius/2.0f;
-
-    DrawCircleV(ballPosition, ballRadius, MAROON);
-}
+#include "ballmotion.h"
+#include "ballmotion.cpp"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -39,9 +18,13 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
+    
+
     FootballPitch footballPitch;
-    ballPosition.x = GetScreenWidth()/2.0f;
-    ballPosition.y = GetScreenHeight()/2.0f;
+    BallMotion ballMotion;
+    ballMotion.SetPosition(footballPitch.GetCentreSpot());
+    Rectangle touchArea = footballPitch.GetPitchLimits();
+    Vector2 touchPosition = { 0, 0 };
     
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -54,6 +37,17 @@ int main(void)
         // TODO: Update your variables here
         //----------------------------------------------------------------------------------
 
+        //touchPosition = GetTouchPosition(0);
+
+        //if (CheckCollisionPointRec(touchPosition, touchArea))
+        Vector2 pos = { GetMouseX(), GetMouseY() };
+        ballMotion.SetFuturePosition(pos);
+        //Vector2 pos2 = { 100, 800 };
+        //ballMotion.SetFuturePosition(100, 800);
+
+            //ballMotion.SetFuturePosition(GetTouchPosition(0));
+       
+
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -62,7 +56,18 @@ int main(void)
 
             footballPitch.Draw();
 
-            DrawPlayersOnPitch();
+            ballMotion.Draw();
+            
+            DrawText(TextFormat("Box position X: %03.1f", ballMotion.GetPosition().x), 0, 10, 10, BLACK);
+            DrawText(TextFormat("Box position Y: %03.1f", ballMotion.GetPosition().y), 0, 30, 10, BLACK);
+            DrawText(TextFormat("Box future position X: %03.1f", ballMotion.GetFuturePosition().x), 0, 50, 10, BLACK);
+            DrawText(TextFormat("Box future position Y: %03.1f", ballMotion.GetFuturePosition().y), 0, 70, 10, BLACK);
+            DrawText(TextFormat("Angle: %03.2f", ballMotion.GetAngle()), 0, 90, 10, BLACK);
+            DrawText(TextFormat("Speed X: %03.4f", ballMotion.GetSpeedX()), 0, 110, 10, BLACK);
+            DrawText(TextFormat("Speed Y: %03.4f", ballMotion.GetSpeedY()), 0, 130, 10, BLACK);
+            DrawText(TextFormat("Distance: %03.1f", ballMotion.Distance()), 0, 150, 10, BLACK);
+            DrawText(TextFormat("Mouse position X: %03i", GetMouseX()), 0, 170, 10, BLACK);
+            DrawText(TextFormat("Mouse position Y: %03i", GetMouseY()), 0, 190, 10, BLACK);
 
             //DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
 

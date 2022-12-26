@@ -9,8 +9,15 @@ class FootballPitch
         FootballPitch(void);
         ~FootballPitch(void);
         void Draw();
+        Vector2 GetCentreSpot();
+        Rectangle GetPitchLimits();
     private:   
         Color PITCH = Color { 0, 174, 0, 255 };
+        float ratio;
+        float zero_x;
+        float zero_y; 
+        float width;
+        float height;
         // Stadium & pitch
         Rectangle stadium;
         Rectangle pitch_limits;
